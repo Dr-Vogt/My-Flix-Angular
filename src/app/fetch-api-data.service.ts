@@ -5,10 +5,28 @@ import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 const apiUrl = 'https://testingmovieapi.onrender.com';
+
+type UserLoginRequest = {
+  username: string;
+  password: string;
+}
+
+type UserLoginResponse = {
+  user:{
+     Username:string;
+   Password: string;
+   Email: string;
+   Birthday: string;
+   
+  }
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class UserRegistrationService {
+
+export class FetchApiDataService {
 
   constructor(private http: HttpClient) {
    }
@@ -20,11 +38,13 @@ export class UserRegistrationService {
     );
   } 
 
-  public userLogin(userDetails: any): Observable<any> {
+
+  
+  public userLogin(userDetails: UserLoginRequest): Observable<any> {
     console.log(userDetails);
-    return this.http.post(apiUrl + `/login?username=${userDetails.username}&password=${userDetails.password}`, userDetails)
-        .pipe(map(this.extractResponseData), catchError(this.handleError))
-}
+    return this.http.post<UserLoginResponse>(apiUrl + `/login?username=${userDetails.username}&password=${userDetails.password}`, userDetails)
+      .pipe(map(this.extractResponseData), catchError(this.handleError));
+  }
 
   public getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
