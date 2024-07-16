@@ -4,6 +4,7 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserRegistrationFormComponent } from '../user-registration-form/user-registration-form.component';
+import { UserLoginRequest } from '../../types';
 
 @Component({
   selector: 'app-user-login-form',
@@ -11,9 +12,9 @@ import { UserRegistrationFormComponent } from '../user-registration-form/user-re
   styleUrls: ['./user-login-form.component.scss']
 })
   export class UserLoginFormComponent implements OnInit {
-    @Input() userData = {
-       username: "",
-       password: "",
+    @Input() userData: UserLoginRequest = {
+       Username: "",
+       Password: "",
        };
     constructor(
         public fetchApiData: FetchApiDataService,
