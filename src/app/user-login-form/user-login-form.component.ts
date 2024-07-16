@@ -20,6 +20,7 @@ import { UserLoginRequest } from '../../types';
         public fetchApiData: FetchApiDataService,
         public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
         public snackBar: MatSnackBar,
+        public router: Router,
     ) { }
 
     ngOnInit(): void {}
@@ -32,6 +33,7 @@ import { UserLoginRequest } from '../../types';
           });
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
+          this.router.navigate(["/movies"])
         },
         (response) => {
           this.snackBar.open(response, 'NOT OK', {
