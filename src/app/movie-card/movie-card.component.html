@@ -1,6 +1,8 @@
-<mat-card *ngFor="let movie of movies; let i=index;">
-    <mat-dialog-content>
-        <mat-card-title>{{movie.Title}}</mat-card-title>
-        <mat-card-subtitle><img src={{movie.ImagePath}}/></mat-card-subtitle>
-    </mat-dialog-content>
+<div class="row">
+<mat-card *ngFor="let movie of movies; let i=index;" class="col-4 mb-3">  
+    <mat-card-subtitle>
+        <img src={{movie.ImagePath}} style="width:100%"/>
+    </mat-card-subtitle>
+    <mat-card-title>{{movie.Title}}</mat-card-title>
 </mat-card>
+</div>

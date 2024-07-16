@@ -4,6 +4,7 @@ import { FetchApiDataService } from '../fetch-api-data.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UserRegistrationFormComponent } from '../user-registration-form/user-registration-form.component';
+import { UserLoginRequest } from '../../types';
 
 @Component({
   selector: 'app-user-login-form',
@@ -11,14 +12,15 @@ import { UserRegistrationFormComponent } from '../user-registration-form/user-re
   styleUrls: ['./user-login-form.component.scss']
 })
   export class UserLoginFormComponent implements OnInit {
-    @Input() userData = {
-       username: "",
-       password: "",
+    @Input() userData: UserLoginRequest = {
+       Username: "",
+       Password: "",
        };
     constructor(
         public fetchApiData: FetchApiDataService,
         public dialogRef: MatDialogRef<UserRegistrationFormComponent>,
         public snackBar: MatSnackBar,
+        public router: Router,
     ) { }
 
     ngOnInit(): void {}
@@ -31,6 +33,7 @@ import { UserRegistrationFormComponent } from '../user-registration-form/user-re
           });
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
+          this.router.navigate(["/movies"])
         },
         (response) => {
           this.snackBar.open(response, 'NOT OK', {

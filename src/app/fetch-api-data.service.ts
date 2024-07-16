@@ -3,24 +3,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import {UserLoginRequest, Movie, UserLoginResponse, UserRegistration} from '../types'
 
 const apiUrl = 'https://testingmovieapi.onrender.com';
-
-type UserLoginRequest = {
-  username: string;
-  password: string;
-}
-
-type UserLoginResponse = {
-  user:{
-     Username:string;
-   Password: string;
-   Email: string;
-   Birthday: string;
-   
-  }
-  token: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -31,24 +16,21 @@ export class FetchApiDataService {
   constructor(private http: HttpClient) {
    }
   
-  public userRegistration(userDetails: any): Observable<any> {
+  public userRegistration(userDetails: UserRegistration) {
     console.log(userDetails);
     return this.http.post(apiUrl + '/signup', userDetails).pipe(
       catchError(this.handleError)
     );
   } 
-
-
   
-  public userLogin(userDetails: UserLoginRequest): Observable<any> {
-    console.log(userDetails);
-    return this.http.post<UserLoginResponse>(apiUrl + `/login?username=${userDetails.username}&password=${userDetails.password}`, userDetails)
+  public userLogin(userDetails: UserLoginRequest){
+    return this.http.post<UserLoginResponse>(apiUrl + `/login`, userDetails)
       .pipe(map(this.extractResponseData), catchError(this.handleError));
   }
 
-  public getAllMovies(): Observable<any> {
+  public getAllMovies() {
     const token = localStorage.getItem('token');
-    return this.http.get<any>(apiUrl + '/movies', {
+    return this.http.get<Movie[]>(apiUrl + '/movies', {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       })
