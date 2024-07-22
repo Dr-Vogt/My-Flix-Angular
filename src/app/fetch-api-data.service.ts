@@ -108,6 +108,18 @@ public getUserList(): Observable<any> {
   );
 }
 
+public getOneUser(username: string): Observable<any> {
+  const token = localStorage.getItem('token');
+  return this.http.get<any>(`${apiUrl}/users/${username}`, {
+    headers: new HttpHeaders({
+      Authorization: 'Bearer ' + token,
+    })
+  }).pipe(
+    map(this.extractResponseData),
+    catchError(this.handleError)
+  );
+}
+
   public updateUser(username: string, userDetails: any): Observable<any> {
     const token = localStorage.getItem('token');
     return this.http.put<any>(`${apiUrl}/users/${username}`, userDetails, {

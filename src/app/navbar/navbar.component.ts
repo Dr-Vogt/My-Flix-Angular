@@ -6,10 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
-  currentUser = undefined
+ // currentUser = undefined
   constructor(
     public fetchApiData: FetchApiDataService,
     public router: Router,
@@ -18,24 +18,32 @@ export class NavbarComponent {
   }
 
   ngOnInit(): void {
-    this.getUserFromLocalStorage()
+   // this.getUserFromLocalStorage()
   }
 
-  getUserFromLocalStorage(){
-    const storageUser = localStorage.getItem('currentUser')
-    if(storageUser){
-      this.currentUser = JSON.parse(storageUser)
-    }else {
-      this.currentUser = undefined
-    }
+ // getUserFromLocalStorage(){
+   // const storageUser = localStorage.getItem('currentUser')
+  //  if(storageUser){
+  //    this.currentUser = JSON.parse(storageUser)
+   // }else {
+  //    this.currentUser = undefined
+  //  }
+ // }
+
+  public launchMovies(): void {
+    this.router.navigate(['movies']);
+  }
+
+  public launchProfile(): void {
+    this.router.navigate(['profile']);
   }
 
   ngDoCheck() {
-    this.getUserFromLocalStorage();
+   // this.getUserFromLocalStorage();
   }
 
   logoutUser(): void {
-    this.getUserFromLocalStorage();
+   // this.getUserFromLocalStorage();
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     this.router.navigate(['/welcome']);

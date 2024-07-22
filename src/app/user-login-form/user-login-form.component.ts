@@ -28,15 +28,15 @@ import { UserLoginRequest } from '../../types';
       this.fetchApiData.userLogin(this.userData).subscribe(
         (response) => {
           this.dialogRef.close();
-          this.snackBar.open(response, 'OK', {
+          this.snackBar.open('Login successful', 'OK', {
             duration: 2000,
           });
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
           this.router.navigate(["/movies"])
         },
-        (response) => {
-          this.snackBar.open(response, 'NOT OK', {
+        (error) => {
+          this.snackBar.open('Login failed: ' + error.error.message, 'OK', {
             duration: 9000,
           });
         }
