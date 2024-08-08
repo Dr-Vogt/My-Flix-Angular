@@ -2,11 +2,11 @@
 
   <mat-card class="user-details-card">
     <mat-card-header>
-      <mat-card-title class="user-header">Welcome, {{user.Username}}</mat-card-title>
+      <mat-card-title class="user-header">Welcome, {{userData.Username}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p><b>Username:</b>{{user.Username}}</p>
-      <p><b>Email:</b> {{user.Email}}</p>
+      <p><b>Username:</b>{{userData.Username}}</p>
+      <p><b>Email:</b> {{userData.Email}}</p>
     </mat-card-content>
   </mat-card>
 
@@ -46,9 +46,10 @@
   <div class="favs-container">
     <h3>Your Favorite Movies</h3>
     <div class="fav-movies">
-      <mat-card *ngFor="let movie of FavoriteMovies;">
+      <mat-card *ngFor="let movie of FavoriteMovies">
         <mat-card-content>
-          <img class="movie-posters" src="{{movie.ImageURL}}" alt="{{movie.Title}}" />
+          <img src={{movie.ImagePath}} style="width:100%" alt= {{movie.Title}} />
+          <h3>{{ movie.Title }}</h3> <!-- Add this line to display the movie title -->
         </mat-card-content>
       </mat-card>
       <div *ngIf="!FavoriteMovies || FavoriteMovies.length === 0">

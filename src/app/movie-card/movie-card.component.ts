@@ -13,6 +13,7 @@ import { MovieSynopsisComponent } from '../movie-synopsis/movie-synopsis.compone
 })
 export class MovieCardComponent {
   movies: any[] = [];
+  favoriteMovies: any[] = [];
   constructor(
     public fetchApiData: FetchApiDataService,
     public snackBar: MatSnackBar,
@@ -20,6 +21,7 @@ export class MovieCardComponent {
 
 ngOnInit(): void {
   this.getMovies();
+  this.getFavoriteMovies();
 }
 
 getMovies(): void {
@@ -59,4 +61,79 @@ getMovies(): void {
       width: '400px'
     })
   }
+  getFavoriteMovies(): void {
+    const username = localStorage.getItem('currentUser');
+    if (username) {
+      this.fetchApiData.getOneUser(JSON.parse(username).Username).subscribe((user: any) => {
+        this.favoriteMovies = user.FavoriteMovies;
+        console.log('Favorite Movies:', this.favoriteMovies);
+      });
+    }
+  }
+
+  isFavorite(movieId: string): boolean {
+    return this.favoriteMovies.includes(movieId);
+  }
+
+  toggleFavorite(movieId: string): void {
+    console.log('Toggle favorite for movie ID:', movieId);
+    if (this.isFavorite(movieId)) {
+      this.removeFromFavorites(movieId);
+    } else {
+      this.addToFavorites(movieId);
+    }
+  }
+
+  addToFavorites(movieId: string): void {
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      try {
+        const username = JSON.parse(user).Username;
+        console.log(`Adding movie ID: ${movieId} to favorites for user: ${username}`);
+        this.fetchApiData.addFavoriteMovie(username, movieId).subscribe(
+          (result) => {
+            console.log('Add to favorites result:', result);
+            this.snackBar.open('Movie added to favorites', 'OK', { duration: 2000 });
+            this.favoriteMovies.push(movieId);
+          },
+          (error) => {
+            console.error('Error adding to favorites:', error);
+            this.snackBar.open('Something went wrong', 'OK', { duration: 2000 });
+          }
+        );
+      } catch (error) {
+        console.error('Error parsing currentUser from localStorage', error);
+        this.snackBar.open('Error with user data. Please log in again.', 'OK', { duration: 2000 });
+      }
+    } else {
+      this.snackBar.open('User not logged in', 'OK', { duration: 2000 });
+    }
+  }
+  
+  removeFromFavorites(movieId: string): void {
+    const user = localStorage.getItem('currentUser');
+    if (user) {
+      try {
+        const username = JSON.parse(user).Username;
+        console.log(`Removing movie ID: ${movieId} from favorites for user: ${username}`);
+        this.fetchApiData.deleteFavoriteMovie(username, movieId).subscribe(
+          (result) => {
+            console.log('Remove from favorites result:', result);
+            this.snackBar.open('Movie removed from favorites', 'OK', { duration: 2000 });
+            this.favoriteMovies = this.favoriteMovies.filter(id => id !== movieId);
+          },
+          (error) => {
+            console.error('Error removing from favorites:', error);
+            this.snackBar.open('Something went wrong', 'OK', { duration: 2000 });
+          }
+        );
+      } catch (e) {
+        console.error('Error parsing currentUser from localStorage', e);
+        this.snackBar.open('Error with user data. Please log in again.', 'OK', { duration: 2000 });
+      }
+    } else {
+      this.snackBar.open('User not logged in', 'OK', { duration: 2000 });
+    }
+  }
+  
 }

@@ -26,28 +26,29 @@ export class UserProfileComponent implements OnInit {
   }
 
   userProfile(): void {
-    const username = localStorage.getItem('currentUser');
-    console.log('Retrieved username from localStorage:', username);
-    
-    if (username) {
-      this.fetchProfile.getOneUser(username).subscribe((user: any) => {
-        console.log('Fetched user from API:', user);
-        this.user = user;
-        this.userData.Username = user.Username;
-        this.userData.Password = user.Password;
-        this.userData.Email = user.Email;
-        this.userData.Birthday = user.Birthday;
-        this.getFavMovies();
-      });
+    const userString = localStorage.getItem('currentUser');
+    if (userString) {
+      this.user = JSON.parse(userString);
+      const username = this.user.Username;
+      console.log('Retrieved username from localStorage:', username);
+      if (username) {
+        this.fetchProfile.getOneUser(username).subscribe((user: any) => {
+          console.log('Fetched user from API:', user);
+          this.userData = user;
+          this.getFavMovies();
+        });
+      }
     }
   }
+
 
   updateProfile(): void {
     const username = localStorage.getItem('currentUser');
     if (username) {
       this.fetchProfile.updateUser(JSON.parse(username).Username, this.userData).subscribe((response) => {
         console.log('Profile Update', response);
-        localStorage.setItem('user', JSON.stringify(response));
+        //localStorage.setItem('user', JSON.stringify(response));
+        localStorage.setItem('currentUser', response.Username);
         this.snackBar.open('Profile updated successfully', 'OK', {
           duration: 2000
         });
@@ -69,10 +70,27 @@ export class UserProfileComponent implements OnInit {
   }
 
   getFavMovies(): void {
-    this.fetchProfile.getAllMovies().subscribe((movies: any[]) => {
-      this.movies = movies;
-      this.FavoriteMovies = movies.filter((movie: any) => this.user.FavoriteMovies.includes(movie._id));
-      console.log(`Here is this users ${this.FavoriteMovies}`);
-    });
+    const userString = localStorage.getItem('currentUser');
+    if (userString) {
+      const username = JSON.parse(userString).Username;
+      if (username) {
+        this.fetchProfile.getOneUser(username).subscribe((user: any) => {
+          this.user = user;
+          this.userData.FavoriteMovies = user.FavoriteMovies;
+          this.FavoriteMovies = []; // Clear previous favorites
+          user.FavoriteMovies.forEach((movieId: string) => {
+            this.fetchProfile.getMovieById(movieId).subscribe((movie: any) => {
+              console.log(`Fetched movie for ID ${movieId}:`, movie); // Log the movie object
+              if (movie) {
+                this.FavoriteMovies.push(movie);
+              } else {
+                console.error(`No movie found with ID: ${movieId}`);
+              }
+            });
+          });
+        });
+      }
+    }
   }
+  
 }

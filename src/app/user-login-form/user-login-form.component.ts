@@ -33,6 +33,8 @@ import { UserLoginRequest } from '../../types';
           });
           localStorage.setItem('currentUser', JSON.stringify(response.user));
           localStorage.setItem('token', response.token);
+          console.log('Current user set:', localStorage.getItem('currentUser'));
+
           this.router.navigate(["/movies"])
         },
         (error) => {
