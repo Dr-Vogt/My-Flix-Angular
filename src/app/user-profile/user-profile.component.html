@@ -5,7 +5,7 @@
       <mat-card-title class="user-header">Welcome, {{userData.Username}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p><b>Username:</b>{{userData.Username}}</p>
+      <p><b>Username:</b> {{userData.Username}}</p>
       <p><b>Email:</b> {{userData.Email}}</p>
     </mat-card-content>
   </mat-card>
@@ -49,7 +49,7 @@
       <mat-card *ngFor="let movie of FavoriteMovies">
         <mat-card-content>
           <img src={{movie.ImagePath}} style="width:100%" alt= {{movie.Title}} />
-          <h3>{{ movie.Title }}</h3> <!-- Add this line to display the movie title -->
+          <h3>{{ movie.Title }}</h3> 
         </mat-card-content>
       </mat-card>
       <div *ngIf="!FavoriteMovies || FavoriteMovies.length === 0">
