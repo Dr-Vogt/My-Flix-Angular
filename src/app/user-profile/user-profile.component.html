@@ -48,7 +48,7 @@
     <div class="fav-movies">
       <mat-card *ngFor="let movie of FavoriteMovies">
         <mat-card-content>
-          <img src={{movie.ImagePath}} style="width:100%" alt= {{movie.Title}} />
+          <img src="{{movie.ImagePath}}" style="width:100%" alt="{{movie.Title}}" />
           <h3>{{ movie.Title }}</h3> 
         </mat-card-content>
       </mat-card>
@@ -57,5 +57,6 @@
       </div>
     </div>
   </div>
+  
 
 </div>

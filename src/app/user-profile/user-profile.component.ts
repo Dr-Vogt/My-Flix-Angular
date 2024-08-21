@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FetchApiDataService } from '../fetch-api-data.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -77,20 +78,22 @@ export class UserProfileComponent implements OnInit {
         this.fetchProfile.getOneUser(username).subscribe((user: any) => {
           this.user = user;
           this.userData.FavoriteMovies = user.FavoriteMovies;
-          this.FavoriteMovies = []; // Clear previous favorites
-          user.FavoriteMovies.forEach((movieId: string) => {
-            this.fetchProfile.getMovieById(movieId).subscribe((movie: any) => {
-              console.log(`Fetched movie for ID ${movieId}:`, movie); // Log the movie object
-              if (movie) {
-                this.FavoriteMovies.push(movie);
-              } else {
-                console.error(`No movie found with ID: ${movieId}`);
-              }
-            });
+  
+          const movieObservables = user.FavoriteMovies.map((movieId: string) =>
+            this.fetchProfile.getMovieById(movieId)
+          );
+  
+          forkJoin(movieObservables).subscribe((movies: unknown) => {
+            const movieArray = movies as any[]; // Here, we treat 'movies' as an array
+            this.FavoriteMovies = movieArray.filter(movie => movie); // Store non-null movies
+            console.log('Favorite movies:', this.FavoriteMovies);
           });
         });
       }
     }
   }
+  
+  
+  
   
 }
