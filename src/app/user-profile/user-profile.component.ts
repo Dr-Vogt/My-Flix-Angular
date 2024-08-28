@@ -10,22 +10,26 @@ import { forkJoin } from 'rxjs';
   styleUrls: ['./user-profile.component.scss']
 })
 export class UserProfileComponent implements OnInit {
-
-  @Input() userData = { Username: '', Password: '', Email: '', Birthday: '', FavoriteMovies: [] };
+  @Input() userData = {
+    Username: '',
+    Password: '',
+    Email: '',
+    Birthday: '',
+    FavoriteMovies: [],
+  };
   FavoriteMovies: any[] = [];
   movies: any[] = [];
   user: any = {};
-
   constructor(
     public fetchProfile: FetchApiDataService,
+    public fetchApiData: FetchApiDataService,
     public snackBar: MatSnackBar,
     private router: Router
-  ) { }
-
+  ) {}
   ngOnInit(): void {
     this.userProfile();
+    this.getMovies();
   }
-
   userProfile(): void {
     const userString = localStorage.getItem('currentUser');
     if (userString) {
@@ -41,35 +45,46 @@ export class UserProfileComponent implements OnInit {
       }
     }
   }
-
-
+  getMovies(): void {
+    this.fetchApiData.getAllMovies().subscribe((resp: any) => {
+      this.movies = resp;
+      console.log(this.movies);
+      return this.movies;
+    });
+  }
   updateProfile(): void {
     const username = localStorage.getItem('currentUser');
     if (username) {
-      this.fetchProfile.updateUser(JSON.parse(username).Username, this.userData).subscribe((response) => {
-        console.log('Profile Update', response);
-        //localStorage.setItem('user', JSON.stringify(response));
-        localStorage.setItem('currentUser', response.Username);
-        this.snackBar.open('Profile updated successfully', 'OK', {
-          duration: 2000
+      this.fetchProfile
+        .updateUser(JSON.parse(username).Username, this.userData)
+        .subscribe((response) => {
+          console.log('Profile Update', response);
+          //localStorage.setItem('user', JSON.stringify(response));
+          localStorage.setItem('currentUser', response.Username);
+          this.snackBar.open('Profile updated successfully', 'OK', {
+            duration: 2000,
+          });
         });
-      });
     }
   }
-
   deleteUser(): void {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete your account? This action cannot be undone.'
+      )
+    ) {
       const username = localStorage.getItem('currentUser');
       if (username) {
-        this.fetchProfile.deleteUser(JSON.parse(username).Username).subscribe((response) => {
-          console.log('Deleted User', response);
-          localStorage.clear();
-          this.router.navigate(['welcome']);
-        });
+        this.fetchProfile
+          .deleteUser(JSON.parse(username).Username)
+          .subscribe((response) => {
+            console.log('Deleted User', response);
+            localStorage.clear();
+            this.router.navigate(['welcome']);
+          });
       }
     }
   }
-
   getFavMovies(): void {
     const userString = localStorage.getItem('currentUser');
     if (userString) {
@@ -78,22 +93,18 @@ export class UserProfileComponent implements OnInit {
         this.fetchProfile.getOneUser(username).subscribe((user: any) => {
           this.user = user;
           this.userData.FavoriteMovies = user.FavoriteMovies;
-  
-          const movieObservables = user.FavoriteMovies.map((movieId: string) =>
-            this.fetchProfile.getMovieById(movieId)
-          );
-  
-          forkJoin(movieObservables).subscribe((movies: unknown) => {
-            const movieArray = movies as any[]; // Here, we treat 'movies' as an array
-            this.FavoriteMovies = movieArray.filter(movie => movie); // Store non-null movies
-            console.log('Favorite movies:', this.FavoriteMovies);
+          const faveMovies = user.FavoriteMovies.map((movieId: string) => {
+            return this.movies.find((movie) => movie._id === movieId);
           });
+          this.FavoriteMovies = faveMovies;
+          // forkJoin(movieObservables).subscribe((movies: unknown) => {
+          //   const movieArray = movies as any[]; // Here, we treat 'movies' as an array
+          //   this.FavoriteMovies = movieArray.filter((movie) => movie); // Store non-null movies
+          //   console.log('Favorite movies:', this.FavoriteMovies);
+          // });
         });
       }
     }
+    console.log('Favorite Movies:', this.FavoriteMovies);
   }
-  
-  
-  
-  
 }

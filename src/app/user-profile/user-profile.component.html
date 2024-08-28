@@ -21,6 +21,10 @@
         <mat-form-field>
           <input matInput [(ngModel)]="userData.Username" placeholder="Username" name="Username" type="text" />
         </mat-form-field>
+        <mat-label>Password</mat-label>
+        <mat-form-field>
+          <input matInput [(ngModel)]="userData.Password" placeholder="Password" name="Password" type="password" />
+        </mat-form-field>
         <mat-label>Email</mat-label>
         <mat-form-field>
           <input matInput [(ngModel)]="userData.Email" placeholder="Email" name="Email" type="email" />
@@ -45,11 +49,12 @@
 
   <div class="favs-container">
     <h3>Your Favorite Movies</h3>
-    <div class="fav-movies">
+    <div class="fav-movies" style="display: flex; gap: 8px">
       <mat-card *ngFor="let movie of FavoriteMovies">
-        <mat-card-content>
-          <img src="{{movie.ImagePath}}" style="width:100%" alt="{{movie.Title}}" />
+        <mat-card-content class="movie-card">
+          <img src="{{movie.ImagePath}}" style="width:250px" alt="{{movie.Title}}" />
           <h3>{{ movie.Title }}</h3> 
+          
         </mat-card-content>
       </mat-card>
       <div *ngIf="!FavoriteMovies || FavoriteMovies.length === 0">
