@@ -1,34 +1,25 @@
-import { Component } from '@angular/core';
-import { FetchApiDataService } from '../fetch-api-data.service';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component, OnInit } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent {
- // currentUser = undefined
+export class NavbarComponent implements OnInit {
+  isWelcomePage: boolean = false;
+
   constructor(
-    public fetchApiData: FetchApiDataService,
-    public router: Router,
-    public snackBar: MatSnackBar
-  ) { 
-  }
+    public router: Router
+  ) {}
 
   ngOnInit(): void {
-   // this.getUserFromLocalStorage()
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isWelcomePage = event.url === '/welcome' || event.urlAfterRedirects === '/welcome';
+      }
+    });
   }
-
- // getUserFromLocalStorage(){
-   // const storageUser = localStorage.getItem('currentUser')
-  //  if(storageUser){
-  //    this.currentUser = JSON.parse(storageUser)
-   // }else {
-  //    this.currentUser = undefined
-  //  }
- // }
 
   public launchMovies(): void {
     this.router.navigate(['movies']);
@@ -38,15 +29,9 @@ export class NavbarComponent {
     this.router.navigate(['profile']);
   }
 
-  ngDoCheck() {
-   // this.getUserFromLocalStorage();
-  }
-
   logoutUser(): void {
-   // this.getUserFromLocalStorage();
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     this.router.navigate(['/welcome']);
   }
-
 }
